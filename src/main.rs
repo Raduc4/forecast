@@ -2,6 +2,7 @@ use dotenv::dotenv;
 use reqwest;
 use serde::{Deserialize, Serialize};
 use std::env;
+use std::io;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -84,16 +85,26 @@ pub struct Condition {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
     let api_key = env::var("KEY").unwrap();
-    let args: Vec<String> = env::args().collect();
+    
+		
+		loop {
+			println!("Please write the City you want to look for the weather forecast:
+			Write quit for exit");
+			let mut location = String::new();
 
-    let url = format!(
-        "http://api.weatherapi.com/v1/current.json?key={api_key}&q={}",
-        args[1]
-    );
+			io::stdin()
+			.read_line(&mut location)
+			.expect("Failed to read line");
 
-    let forecast = reqwest::get(url).await?.json::<Root>().await?;
-
-    println!("The templerature in {} {} is {} °C. Condition: {}", forecast.location.name, forecast.location.country, forecast.current.temp_c, forecast.current.condition.text);
-
-    Ok(())
+			if location.trim() == String::from("quit") {
+				std::process::exit(1);
+			}
+			
+			let url = format!("http://api.weatherapi.com/v1/current.json?key={api_key}&q={location}");
+			
+			let forecast = reqwest::get(url).await?.json::<Root>().await?;
+			println!("
+			The templerature in {} {} is {} °C. Condition: {}
+			", forecast.location.name, forecast.location.country, forecast.current.temp_c, forecast.current.condition.text);
+		}
 }

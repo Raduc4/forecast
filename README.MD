@@ -1,3 +1,3 @@
-### GET AN API KEY FROM
+-### GET AN API KEY FROM
 
 `https://www.weatherapi.com/`
