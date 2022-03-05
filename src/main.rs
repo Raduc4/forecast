@@ -88,8 +88,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     
 		
 		loop {
-			println!("Please write the City you want to look for the weather forecast:
-			Write quit for exit");
+			println!("Please write the City you want to look for the weather forecast:\nWrite quit for exit\n");
 			let mut location = String::new();
 
 			io::stdin()
@@ -99,12 +98,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 			if location.trim() == String::from("quit") {
 				std::process::exit(1);
 			}
+
+			println!("\n");
 			
 			let url = format!("http://api.weatherapi.com/v1/current.json?key={api_key}&q={location}");
 			
 			let forecast = reqwest::get(url).await?.json::<Root>().await?;
-			println!("
-			The templerature in {} {} is {} °C. Condition: {}
+			println!("The templerature in {} {} is {} °C. Condition: {}
 			", forecast.location.name, forecast.location.country, forecast.current.temp_c, forecast.current.condition.text);
 		}
 }
